@@ -69,6 +69,48 @@ public class GestorPersonas {
                 .map(p -> p.getNombre() + ": $" + (p.getSueldoHora() * 8))
                 .forEach(System.out::println);
 
+        // a) Mostrar con peek: Nombre completo y sueldo por 8 horas
+        System.out.println("\n🧾 Sueldo por 8 horas (Directores M) con nombre completo:");
+        personas.stream()
+                .filter(p -> p.getCargo().equalsIgnoreCase("director") && p.getGenero().equalsIgnoreCase("M"))
+                .peek(p -> System.out.println("Nombre: " + p.getNombre() + " " + p.getApellido() +
+                        " | Sueldo por 8 horas: $" + (p.getSueldoHora() * 8)))
+                .collect(Collectors.toList()); // Ejecuta el stream
+
+// b) Buscar la primera mujer desarrolladora
+        System.out.println("\n👩‍💻 Primera desarrolladora mujer:");
+        Optional<Persona> primeraDesarrolladora = personas.stream()
+                .filter(p -> p.getCargo().equalsIgnoreCase("desarrollador"))
+                .filter(p -> p.getGenero().equalsIgnoreCase("F"))
+                .findFirst();
+
+        primeraDesarrolladora.ifPresentOrElse(
+                System.out::println,
+                () -> System.out.println("No se encontró ninguna desarrolladora mujer.")
+        );
+
+// c) Buscar al desarrollador que más gana
+        System.out.println("\n💸 Desarrollador con mejor sueldo por hora:");
+        Optional<Persona> masGana = personas.stream()
+                .filter(p -> p.getCargo().equalsIgnoreCase("desarrollador"))
+                .max(Comparator.comparingDouble(Persona::getSueldoHora));
+
+        if (masGana.isPresent()) {
+            Persona p = masGana.get();
+            System.out.println("Nombre: " + p.getNombre() + " " + p.getApellido());
+            System.out.println("Sueldo por hora: $" + p.getSueldoHora());
+        } else {
+            System.out.println("No hay desarrolladores en la lista.");
+        }
+
+// d) Mostrar mujeres ordenadas por nombre
+        System.out.println("\n👩 Mujeres ordenadas por nombre:");
+        personas.stream()
+                .filter(p -> p.getGenero().equalsIgnoreCase("F"))
+                .sorted(Comparator.comparing(Persona::getNombre))
+                .forEach(System.out::println);
+
+
         scanner.close();
     }
 }
